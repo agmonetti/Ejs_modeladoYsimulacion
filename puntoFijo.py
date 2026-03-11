@@ -24,3 +24,10 @@ def fixed_point_iteration(x0, tol=1e-5, max_iter=100):
 
 x0 = 1.5
 root, iter_values = fixed_point_iteration(x0)
+
+#Listas de g(x) usados:
+#0.4 * np.exp(x**2)
+#np.exp(-x)
+#(1/3) * (2 * np.sqrt(3) + x)
+#np.sqrt(np.exp(x) / 3)
+#np.pi + 0.5 * np.sin(x / 2)
