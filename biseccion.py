@@ -32,7 +32,7 @@ def biseccion(f, a, b, iteraciones=100, tolerancia=1e-6, precision=5):
 
 # Definir la función
 def f(x):
-    return x - np.cos(x)
+    return np.exp(x) - 2 - x
 
 ## no funciona desde mi visual en arch - desde zsh, grafico visual perfectamente
 def graficar_biseccion(f, a, b, raiz):
@@ -52,6 +52,28 @@ def graficar_biseccion(f, a, b, raiz):
     
     # Instrucción de renderizado y proyección de la ventana gráfica
     plt.show() 
+
+#funcion para encontrar los intervalos dado una funcion x
+def buscar_intervalos(f, inicio, fin, paso=0.5):
+    """
+    Realiza un barrido escalar para encontrar intervalos [a, b] 
+    donde la función cambia de signo (f(a) * f(b) < 0).
+    """
+    intervalos = []
+    
+    # Generamos el vector de puntos a evaluar
+    puntos_x = np.arange(inicio, fin + paso, paso)
+    
+    for i in range(len(puntos_x) - 1):
+        a = puntos_x[i]
+        b = puntos_x[i+1]
+        
+        # Aplicación del Teorema de Bolzano
+        if f(a) * f(b) < 0:
+            # Guardamos el intervalo redondeado para mayor limpieza visual
+            intervalos.append((round(a, 4), round(b, 4)))
+            
+    return intervalos
 
 # Intervalo inicial
 a = 0
@@ -73,3 +95,12 @@ graficar_biseccion(f, a, b, raiz)
 # x - np.cos(x) -> raiz: 0.0.7390851974487305
 
 
+#Guia 1:
+# item a) np.exp(x) - 2 - x -> hallar intervalo
+# Buscamos raíces entre -5 y 5, avanzando de a 0.5
+"""
+intervalos_encontrados = buscar_intervalos(f, -5, 5, 0.5)
+print("Intervalos encontrados para f(x) = np.exp(x) - 2 - x:")
+for a, b in intervalos_encontrados:
+    print(f"Raíz detectada en el intervalo: [{a}, {b}]")
+"""
