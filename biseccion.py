@@ -30,9 +30,6 @@ def biseccion(f, a, b, iteraciones=100, tolerancia=1e-6, precision=5):
     print(tabulate(results, headers=["i", "a", "b", "c", "f(c)"]))
     raise ValueError("El método no convergió en el número máximo de iteraciones.")
 
-# Definir la función
-def f(x):
-    return np.exp(x) - 2 - x
 
 ## no funciona desde mi visual en arch - desde zsh, grafico visual perfectamente
 def graficar_biseccion(f, a, b, raiz):
@@ -75,9 +72,13 @@ def buscar_intervalos(f, inicio, fin, paso=0.5):
             
     return intervalos
 
+
+def f(x):
+    return 3 * (x + 1) * (x - 1/2) * (x - 1)
+
 # Intervalo inicial
-a = 0
-b = 1
+a = -1.25
+b =2.5
 
 # Encontrar y mostrar la raíz
 raiz = biseccion(f, a, b)
@@ -85,7 +86,7 @@ print(f"La raíz encontrada es: {raiz}")
 print("Graficando...")
 graficar_biseccion(f, a, b, raiz)
 
-#Ejercicios:
+#Ejercicios busqueda de raices ppt:
 # x**2 -4 -> raiz: 2.000000238418579
 # x**3 -x -2 -> raiz: 1.5213804244995117
 #x**2 -3 -> raiz: 1.732050895690918
