@@ -2,7 +2,7 @@ import numpy as np
 from tabulate import tabulate
 import matplotlib.pyplot as plt
 
-def biseccion(f, a, b, iteraciones=100, tolerancia=1e-3, precision=5):
+def biseccion(f, a, b, iteraciones=100, tolerancia=1e-3, precision=8):
     # Verificación inicial
     if f(a) * f(b) >= 0:
         raise ValueError("La función debe tener signos opuestos en los extremos del intervalo.")
@@ -13,7 +13,7 @@ def biseccion(f, a, b, iteraciones=100, tolerancia=1e-3, precision=5):
         c = (a + b) / 2.0
         fc = f(c)
 
-        results.append([i+1, round(a, precision), round(b, precision), round(c, precision), round(fc, precision)])
+        results.append([i, round(a, precision), round(b, precision), round(c, precision), round(fc, precision)])
 
         # Condición de parada
         if abs(fc) < tolerancia or (b - a) / 2.0 < tolerancia:
@@ -74,11 +74,11 @@ def buscar_intervalos(f, inicio, fin, paso=0.5):
 
 
 def f(x):
-    return(x + 2) * (x + 1) * (x - 1)**3 * (x - 2)
+    return x * np.exp(-x)
 
 # Intervalo inicial
-a =-1.5
-b =1.75
+a =-1
+b =1
 
 # Encontrar y mostrar la raíz
 raiz = biseccion(f, a, b)

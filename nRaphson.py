@@ -6,7 +6,7 @@ def derivative(f, x, dx=1e-6):
     """Aproximación de la derivada usando diferencias centrales"""
     return (f(x + dx) - f(x - dx)) / (2.0 * dx)
 
-def newton_raphson(f, valor_inicial, iteraciones=100, tolerancia=1e-6, precision=5):
+def newton_raphson(f, valor_inicial, iteraciones=100, tolerancia=1e-6, precision=10):
     x = valor_inicial
     results = []
     for i in range(iteraciones):
@@ -15,9 +15,11 @@ def newton_raphson(f, valor_inicial, iteraciones=100, tolerancia=1e-6, precision
         if dfx == 0:
             raise ValueError("La derivada es cero. El método no puede continuar.")
         x_new = round(x - fx / dfx, precision)
-        results.append([i, x, fx, dfx, x_new])
-        print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado"], tablefmt="grid"))
-        if abs(x_new - x) < tolerancia:
+        # Calcula el error absoluto: distancia entre el valor nuevo y el anterior
+        error_abs = abs(x_new - x)
+        results.append([i, x, fx, dfx, x_new, round(error_abs, precision)])
+        print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
+        if error_abs < tolerancia:
             return x_new
         x = x_new
     raise ValueError("El método no convergió o faltan iteraciones.")
@@ -43,10 +45,10 @@ def graficar(f, raiz):
 
 # Definir la función para la cual quieres encontrar la raíz
 def f(x):
-    return x**3 - x - 4
+    return x * np.exp(-x) 
 
 # Valor inicial
-valor_inicial = 1.0
+valor_inicial = -1
 
 # Encontrar la raíz utilizando el método de Newton-Raphson
 raiz = newton_raphson(f, valor_inicial)

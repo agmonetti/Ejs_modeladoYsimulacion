@@ -21,9 +21,9 @@ def fixed_point_iteration(x0, tol=1e-6, max_iter=100):
 
 
 def g(x):
-    return np.exp(-x) 
+    return  x - x*np.exp(-x)
 
-x0 = 1
+x0 = 0.5
 root, iter_values = fixed_point_iteration(x0)
 
 #print(np.pi)
