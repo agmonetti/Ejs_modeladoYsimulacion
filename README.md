@@ -19,6 +19,21 @@ Implementación de la iteración de punto fijo para encontrar las raíces de una
   - Verifica dinámicamente la convergencia analizando la tolerancia requerida comparada con el error absoluto de iteraciones sucesivas.
 - **Uso**: El usuario debe proveer el punto inicial $x_0$ y la función $g(x)$.
 
+### 3. Método de Newton-Raphson (`nRaphson.py`)
+Implementación del método de Newton-Raphson para encontrar las raíces de una función no lineal aproximándose mediante su derivada.
+- **Características**:
+  - Cálculo de la derivada numérica utilizando el método de diferencias centrales (no requiere librería extra para derivar).
+  - Tabla de iteraciones interactiva generada con `tabulate`.
+  - Visualización gráfica de la función y la posición exacta de la raíz usando `matplotlib`.
+- **Uso**: El usuario debe proveer la función principal $f(x)$ y una aproximación o valor inicial $x_0$.
+
+### 4. Método de Aceleración de Aitken (`aitken.py`)
+Implementación de la mejora $\Delta^2$ de Aitken aplicada sobre el método secuencial de Punto Fijo.
+- **Características**:
+  - Mejora y acelera drásticamente la tasa de convergencia en relación al Punto Fijo estándar.
+  - Presentación mediante consola de una tabla con los cálculos de las iteraciones puente unificadas ($x_1$, $x_2$) y el valor acelerado precalculado.
+- **Uso**: El usuario debe proveer el punto inicial $x_0$ y la función iterante $g(x)$.
+
 ## Dependencias
 
 ```bash
