@@ -2,7 +2,7 @@ import numpy as np
 from tabulate import tabulate
 import matplotlib.pyplot as plt
 
-def biseccion(f, a, b, iteraciones=100, tolerancia=1e-6, precision=5):
+def biseccion(f, a, b, iteraciones=100, tolerancia=1e-3, precision=5):
     # Verificación inicial
     if f(a) * f(b) >= 0:
         raise ValueError("La función debe tener signos opuestos en los extremos del intervalo.")
@@ -74,11 +74,11 @@ def buscar_intervalos(f, inicio, fin, paso=0.5):
 
 
 def f(x):
-    return 3 * (x + 1) * (x - 1/2) * (x - 1)
+    return(x + 2) * (x + 1) * (x - 1)**3 * (x - 2)
 
 # Intervalo inicial
-a = -1.25
-b =2.5
+a =-1.5
+b =1.75
 
 # Encontrar y mostrar la raíz
 raiz = biseccion(f, a, b)
@@ -96,7 +96,7 @@ graficar_biseccion(f, a, b, raiz)
 # x - np.cos(x) -> raiz: 0.0.7390851974487305
 
 
-#Guia 1:
+#Guia - punto 1:
 # item a) np.exp(x) - 2 - x -> hallar intervalo
 # Buscamos raíces entre -5 y 5, avanzando de a 0.5
 """
@@ -105,3 +105,10 @@ print("Intervalos encontrados para f(x) = np.exp(x) - 2 - x:")
 for a, b in intervalos_encontrados:
     print(f"Raíz detectada en el intervalo: [{a}, {b}]")
 """
+
+# punto 3: tolerancia 10⁻3
+# a) np.sqrt(x) - np.cos(x), intervalo: [0,1]
+# b) x - 2**(-x), intervalo: [0,1]
+# c) np.exp(x) - x**2 + 3*x - 2, intervalo: [0,1]
+# d) 2*x * np.cos(x) - (x + 1)**2, intervalo: [-3,-2] y [-1,0]
+# e) x * np.cos(x) - 2*x**2 + 3*x - 1, intervalo: [0.2,.3] y [1.2,1.3]
