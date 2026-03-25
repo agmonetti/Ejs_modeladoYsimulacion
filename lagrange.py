@@ -16,10 +16,12 @@ def calcular_polinomio_lagrange(func_str, puntos_x, x_eval):
     puntos_y = [f.subs(x, xi) for xi in puntos_x]
     
     print("--- 1. Puntos Evaluados ---")
+    print()
     for xi, yi in zip(puntos_x, puntos_y):
         print(f"x = {float(xi):.4f}  =>  y = f(x) = {float(yi):.6f}")
     
     print("\n--- 2. Construcción del Polinomio ---")
+    print()
     P = 0
     for i in range(n):
         if puntos_y[i] == 0:
@@ -51,7 +53,8 @@ def calcular_error_local(f_expr, P_expr, x_eval, P_eval_num):
     f_eval = float(f_expr.subs(x, x_eval).evalf())
     error_local = abs(f_eval - P_eval_num)
     
-    print("--- 3. Error Local ---")
+    print(f"--- 3. Error Local en {x_eval} ---")
+    print()
     print(f"f({x_eval}) = {f_eval:.6f}")
     print(f"P({x_eval}) = {P_eval_num:.6f}")
     print(f"Error Local = |f({x_eval}) - P({x_eval})| = {error_local:.6f}\n")
@@ -64,8 +67,10 @@ def calcular_cota_global(f_expr, puntos_x):
     n = len(puntos_x)
     x_min, x_max = float(min(puntos_x)), float(max(puntos_x))
     
-    print("--- 4. Cota de Error Global ---")
+    print("--- 4. Cota de Error Global---")
+    print()
     derivada_n = sp.diff(f_expr, x, n) 
+    print(f"Necesito la derivada de orden {n} porque el polinomio es de grado {n} (hay {n} puntos).")
     print(f"Derivada {n} de f(x) = {derivada_n}")
     
     # Máximo de la derivada
@@ -84,6 +89,7 @@ def calcular_cota_global(f_expr, puntos_x):
     raices_g_prima = sp.solve(g_prima, x)
     raices_validas = [r for r in raices_g_prima if r.is_real and x_min <= float(r) <= x_max]
     
+    # maximo de |g(x)| en el intervalo
     puntos_evaluar_g = [x_min, x_max] + [float(r) for r in raices_validas]
     max_g = max([abs(float(g.subs(x, val).evalf())) for val in puntos_evaluar_g])
     
@@ -92,7 +98,7 @@ def calcular_cota_global(f_expr, puntos_x):
     
     print(f"Máximo de la derivada en el intervalo ~= {max_der:.6f}")
     print(f"Máximo de |g(x)| en el intervalo ~= {max_g:.6f}")
-    print(f"Cota de Error Global = {float(cota_global):.6f}\n")
+    print(f"Cota de Error Global ->  ({max_der:.6f} / {fact_n}) * {max_g:.6f} = {float(cota_global):.6f}\n")
     
     return cota_global
 
@@ -131,6 +137,7 @@ def graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y, x_eval,
 
 def ejecutar_ejercicio(func_str, puntos_x, x_eval):
     """Coordina la ejecución de todos los módulos para un ejercicio."""
+    print()
     print("="*60)
     print(f" RESOLVIENDO: f(x) = {func_str} ")
     print("="*60, "\n")
@@ -145,9 +152,13 @@ def ejecutar_ejercicio(func_str, puntos_x, x_eval):
     # 3. Demostración
     print("--- 5. Demostración Final ---")
     if error_local <= cota_global:
+        print()
         print(f"¡Éxito! Cota global ({float(cota_global):.6f}) >= Error Local ({error_local:.6f})")
+        print()
     else:
+        print()
         print(f"ATENCIÓN: Cota global ({float(cota_global):.6f}) < Error Local ({error_local:.6f}). Revisar.")
+        print()
         
     # 4. Graficar
     graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y, x_eval, P_eval_num)
@@ -157,8 +168,15 @@ def ejecutar_ejercicio(func_str, puntos_x, x_eval):
 # main
 # ==========================================
 
+# (funcion, puntos_x, x_eval)
+
 # Ejercicio 1
 #ejecutar_ejercicio('exp(x)', [1, 2, 3], 1.3)
+# Ejercicio 2
+ejecutar_ejercicio('ln(x+1)', [0, 1, 3,4], 0.45)
 
-# Ejercicio 2 (Descomentalo cuando quieras probar el de seno)
-ejecutar_ejercicio('sin(x)', [0, np.pi/2, np.pi], np.pi/4)
+'''
+el codigo actual de lagrange siempre espera una f(x), pero puede no ser provista y en lugar de ella, los puntos de x y puntos de y, deberiamos contemplar ese caso no?
+
+
+'''
