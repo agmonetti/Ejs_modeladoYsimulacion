@@ -34,6 +34,36 @@ Implementación de la mejora $\Delta^2$ de Aitken aplicada sobre el método secu
   - Presentación mediante consola de una tabla con los cálculos de las iteraciones puente unificadas ($x_1$, $x_2$) y el valor acelerado precalculado.
 - **Uso**: El usuario debe proveer el punto inicial $x_0$ y la función iterante $g(x)$.
 
+### 5. Método de Diferencias Finitas (`diferencias_finitas.py`)
+Implementación del cálculo de derivadas numéricas mediante aproximaciones por diferencias finitas centradas.
+- **Características**:
+  - Cálculo de primera y segunda derivada usando diferencias centrales.
+  - Comparación automática con valores exactos (analíticos) usando SymPy.
+  - Cálculo del error absoluto para validar precisión de la aproximación.
+  - No requiere derivación simbólica explícita en el código principal.
+- **Uso**: El usuario debe proveer la función $f(x)$ como string, el punto $x$ donde evaluar, y el paso $h$.
+
+### 6. Interpolación de Lagrange (`lagrange.py`)
+Implementación del método de interpolación polinomial de Lagrange para reconstruir funciones a partir de puntos conocidos.
+- **Características**:
+  - **Modo dual**: Soporta tanto función explícita como datos directos (puntos $x$ y $y$ sin función).
+  - Construcción paso a paso del polinomio interpolador con visualización de cada término.
+  - Cálculo de errores locales y cotas globales teóricas (con teorema de Taylor).
+  - Gráfico comparativo entre función original y polinomio interpolador.
+  - Validación de que el error local está dentro de la cota teórica.
+- **Uso**:
+  - Con función: `ejecutar_ejercicio([1,2,3], 1.5, func_str='exp(x)')`
+  - Con datos: `ejecutar_ejercicio([1,2,3], 1.5, puntos_y=[2.7, 7.4, 20.1])`
+
+### 7. Métodos Unificados (`bnap.py`)
+Consolidación de los cuatro métodos principales en un único archivo para comparación:
+- **Métodos incluidos**: Bisección, Newton-Raphson, Punto Fijo, y Aceleración de Aitken.
+- **Características**:
+  - Búsqueda automática de intervalos mediante barrido escalar.
+  - Tablas de iteraciones detalladas con formato legible.
+  - Gráficas de la función y localización de raíces.
+  - Análisis comparativo de convergencia entre métodos.
+
 ## Dependencias
 
 ```bash

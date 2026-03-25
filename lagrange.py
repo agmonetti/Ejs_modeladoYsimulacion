@@ -6,19 +6,35 @@ import sympy as sp
 # calculos
 # ==========================================
 
-def calcular_polinomio_lagrange(func_str, puntos_x, x_eval):
-    """Genera el polinomio de Lagrange, muestra los pasos y lo evalúa en x_eval."""
-    x = sp.Symbol('x')
-    f = sp.sympify(func_str)
-    n = len(puntos_x)
+def calcular_polinomio_lagrange(puntos_x, x_eval, func_str=None, puntos_y=None):
+    """Genera el polinomio de Lagrange, muestra los pasos, verifica nodos y evalúa en x_eval.
     
-    # Calcular imágenes
-    puntos_y = [f.subs(x, xi) for xi in puntos_x]
+    Parámetros:
+    - puntos_x: Lista de puntos x para interpolación
+    - x_eval: Punto donde evaluar el polinomio
+    - func_str: (Opcional) String de la función f(x). Si se proporciona, se calcula puntos_y
+    - puntos_y: (Opcional) Lista de puntos y directa. Si func_str no se proporciona, usar esto
+    """
+    x = sp.Symbol('x')
+    n = len(puntos_x)
+    f = None
+    
+    # Determinar si usamos función explícita o datos directos
+    if func_str is not None:
+        f = sp.sympify(func_str)
+        # Calcular imágenes a partir de la función
+        puntos_y = [f.subs(x, xi) for xi in puntos_x]
+    elif puntos_y is not None:
+        # Usar los puntos_y proporcionados directamente
+        if len(puntos_y) != len(puntos_x):
+            raise ValueError("puntos_x y puntos_y deben tener la misma longitud")
+    else:
+        raise ValueError("Debe proporcionar func_str o puntos_y")
     
     print("--- 1. Puntos Evaluados ---")
     print()
     for xi, yi in zip(puntos_x, puntos_y):
-        print(f"x = {float(xi):.4f}  =>  y = f(x) = {float(yi):.6f}")
+        print(f"x = {float(xi):.4f}  =>  y = {float(yi):.6f}")
     
     print("\n--- 2. Construcción del Polinomio ---")
     print()
@@ -41,20 +57,27 @@ def calcular_polinomio_lagrange(func_str, puntos_x, x_eval):
     P_final = sp.expand(P)
     print(f"\nPolinomio final aproximado P(x) = \n{P_final}")
     
-    # Evaluación explícita que pediste
+
+    # Evaluación explícita solicitada
     P_eval_num = float(P_final.subs(x, x_eval).evalf())
-    print(f"\n=> P_{n-1}({x_eval}) ~= {P_eval_num:.6f}\n")
+    print(f"\n=> Evaluación: P_{n-1}({x_eval}) ~= {P_eval_num:.6f}\n")
     
     return f, P_final, puntos_y, P_eval_num
 
 def calcular_error_local(f_expr, P_expr, x_eval, P_eval_num):
     """Calcula la diferencia exacta entre la función y el polinomio en un punto."""
     x = sp.Symbol('x')
+    print(f"--- 3. Error local en {x_eval} ---")
+    print()
+    
+    if f_expr is None:
+        print(f"P({x_eval}) = {P_eval_num:.6f}")
+        print("(No disponible error local: función original no proporcionada)\n")
+        return None
+    
     f_eval = float(f_expr.subs(x, x_eval).evalf())
     error_local = abs(f_eval - P_eval_num)
     
-    print(f"--- 3. Error Local en {x_eval} ---")
-    print()
     print(f"f({x_eval}) = {f_eval:.6f}")
     print(f"P({x_eval}) = {P_eval_num:.6f}")
     print(f"Error Local = |f({x_eval}) - P({x_eval})| = {error_local:.6f}\n")
@@ -63,6 +86,12 @@ def calcular_error_local(f_expr, P_expr, x_eval, P_eval_num):
 
 def calcular_cota_global(f_expr, puntos_x):
     """Calcula la cota teórica máxima del error en el intervalo."""
+    if f_expr is None:
+        print("--- 4. Cota de Error Global ---")
+        print()
+        print("(No disponible: función original no proporcionada)\n")
+        return None
+    
     x = sp.Symbol('x')
     n = len(puntos_x)
     x_min, x_max = float(min(puntos_x)), float(max(puntos_x))
@@ -70,7 +99,7 @@ def calcular_cota_global(f_expr, puntos_x):
     print("--- 4. Cota de Error Global---")
     print()
     derivada_n = sp.diff(f_expr, x, n) 
-    print(f"Necesito la derivada de orden {n} porque el polinomio es de grado {n} (hay {n} puntos).")
+    print(f"Necesito la derivada de orden {n} porque el polinomio es de grado {n-1} (hay {n} puntos).")
     print(f"Derivada {n} de f(x) = {derivada_n}")
     
     # Máximo de la derivada
@@ -89,7 +118,7 @@ def calcular_cota_global(f_expr, puntos_x):
     raices_g_prima = sp.solve(g_prima, x)
     raices_validas = [r for r in raices_g_prima if r.is_real and x_min <= float(r) <= x_max]
     
-    # maximo de |g(x)| en el intervalo
+    # Maximo de |g(x)| en el intervalo
     puntos_evaluar_g = [x_min, x_max] + [float(r) for r in raices_validas]
     max_g = max([abs(float(g.subs(x, val).evalf())) for val in puntos_evaluar_g])
     
@@ -111,20 +140,28 @@ def graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y, x_eval,
     x = sp.Symbol('x')
     x_min, x_max = float(min(puntos_x)), float(max(puntos_x))
     
-    f_num = sp.lambdify(x, f_expr, 'numpy')
     P_num = sp.lambdify(x, P_expr, 'numpy')
     
     x_plot = np.linspace(x_min - 0.5, x_max + 0.5, 400)
-    y_f = f_num(x_plot)
     y_P = P_num(x_plot)
     
     plt.figure(figsize=(10, 6))
-    plt.plot(x_plot, y_f, label='f(x) Original', linestyle='--', color='blue', alpha=0.7)
+    
+    if f_expr is not None:
+        # Graficar ambas curvas
+        f_num = sp.lambdify(x, f_expr, 'numpy')
+        y_f = f_num(x_plot)
+        plt.plot(x_plot, y_f, label='f(x) Original', linestyle='--', color='blue', alpha=0.7)
+        title = f'Interpolación: f(x) = {func_str}'
+    else:
+        # Solo graficar el polinomio interpolador
+        title = 'Interpolación: Datos Directos'
+    
     plt.plot(x_plot, y_P, label='P(x) Lagrange', color='orange')
     plt.scatter([float(xi) for xi in puntos_x], [float(yi) for yi in puntos_y], color='red', zorder=5, label='Puntos base')
     plt.scatter([float(x_eval)], [P_eval_num], color='green', marker='X', s=100, zorder=5, label=f'Eval (x={float(x_eval):.2f})')
     
-    plt.title(f'Interpolación: f(x) = {func_str}')
+    plt.title(title)
     plt.xlabel('x')
     plt.ylabel('y')
     plt.legend()
@@ -135,48 +172,55 @@ def graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y, x_eval,
 # ORQUESTADOR
 # ==========================================
 
-def ejecutar_ejercicio(func_str, puntos_x, x_eval):
+def ejecutar_ejercicio(puntos_x, x_eval, func_str=None, puntos_y=None):
     """Coordina la ejecución de todos los módulos para un ejercicio."""
     print()
     print("="*60)
-    print(f" RESOLVIENDO: f(x) = {func_str} ")
+    if func_str is not None:
+        print(f" RESOLVIENDO: f(x) = {func_str} ")
+    else:
+        print(f" RESOLVIENDO: Interpolación con datos directos ")
     print("="*60, "\n")
     
-    # 1. Armar Polinomio y evaluarlo
-    f_expr, P_expr, puntos_y, P_eval_num = calcular_polinomio_lagrange(func_str, puntos_x, x_eval)
+    # 1, 2 y 3. Armar Polinomio, evaluar nodos y punto pedido
+    f_expr, P_expr, puntos_y_calc, P_eval_num = calcular_polinomio_lagrange(puntos_x, x_eval, func_str=func_str, puntos_y=puntos_y)
     
-    # 2. Calcular Errores
+    # 4. Calcular Errores
     error_local = calcular_error_local(f_expr, P_expr, x_eval, P_eval_num)
+    
+    # 5. Cota global
     cota_global = calcular_cota_global(f_expr, puntos_x)
     
-    # 3. Demostración
+    # 6. Demostración
     print("--- 5. Demostración Final ---")
-    if error_local <= cota_global:
-        print()
-        print(f"¡Éxito! Cota global ({float(cota_global):.6f}) >= Error Local ({error_local:.6f})")
-        print()
+    if error_local is not None and cota_global is not None:
+        if error_local <= cota_global:
+            print()
+            print(f"¡Éxito! Cota global ({float(cota_global):.6f}) >= Error Local ({error_local:.6f})")
+            print()
+        else:
+            print()
+            print(f"ATENCIÓN: Cota global ({float(cota_global):.6f}) < Error Local ({error_local:.6f}). Revisar.")
+            print()
     else:
         print()
-        print(f"ATENCIÓN: Cota global ({float(cota_global):.6f}) < Error Local ({error_local:.6f}). Revisar.")
+        print("(Demostración de cota omitida: faltan datos de la función original)")
         print()
         
-    # 4. Graficar
-    graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y, x_eval, P_eval_num)
+    # 7. Graficar
+    graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y_calc, x_eval, P_eval_num)
 
 
 # ==========================================
 # main
 # ==========================================
 
-# (funcion, puntos_x, x_eval)
+# Firma de la función: (puntos_x, x_eval, func_str=None, puntos_y=None)
 
-# Ejercicio 1
-#ejecutar_ejercicio('exp(x)', [1, 2, 3], 1.3)
-# Ejercicio 2
-ejecutar_ejercicio('ln(x+1)', [0, 1, 3,4], 0.45)
+# CASO 1: Con función explícita
+# ejecutar_ejercicio([1, 2, 3], 1.3, func_str='exp(x)')
 
-'''
-el codigo actual de lagrange siempre espera una f(x), pero puede no ser provista y en lugar de ella, los puntos de x y puntos de y, deberiamos contemplar ese caso no?
+# CASO 2: Con datos directos
+# ejecutar_ejercicio([0, 1, 3, 4], 0.45, puntos_y=[1.0, 2.718, 20.086, 54.598])
 
-
-'''
+ejecutar_ejercicio([0, 1,2], 1.3, puntos_y=[1,3,0])
