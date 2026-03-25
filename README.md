@@ -37,5 +37,5 @@ Implementación de la mejora $\Delta^2$ de Aitken aplicada sobre el método secu
 ## Dependencias
 
 ```bash
-pip install numpy matplotlib tabulate
+pip install numpy matplotlib tabulate sympy
 ```
