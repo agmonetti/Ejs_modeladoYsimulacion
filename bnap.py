@@ -167,20 +167,29 @@ def derivative_for_newton_r(f, x, dx=1e-6):
 
 def newton_raphson(f, valor_inicial, iteraciones=MAX_ITERACIONES, tolerancia=TOLERANCIA, precision=PRECISION):
     x = valor_inicial
-    results = []
+    results = []   
+    
     for i in range(iteraciones):
         fx = round(f(x), precision)
-        dfx = round(derivative_for_newton_r(f, x, dx=tolerancia), precision)
+        dfx = round(derivative_for_newton_r(f, x,), precision)
+        
         if dfx == 0:
             raise ValueError("La derivada es cero. El método no puede continuar.")
+            
         x_new = round(x - fx / dfx, precision)
-        # Calcula el error absoluto: distancia entre el valor nuevo y el anterior
         error_abs = abs(x_new - x)
+        
         results.append([i, x, fx, dfx, x_new, round(error_abs, precision)])
-        print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
+        
         if error_abs < tolerancia:
+            # Se invoca la impresión una sola vez al confirmar la convergencia
+            print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
             return x_new
+            
         x = x_new
+        
+    # Se invoca la impresión una sola vez en caso de divergencia o falta de iteraciones
+    print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
     raise ValueError("El método no convergió o faltan iteraciones.")
 
 

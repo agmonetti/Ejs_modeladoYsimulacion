@@ -8,20 +8,29 @@ def derivative(f, x, dx=1e-6):
 
 def newton_raphson(f, valor_inicial, iteraciones=100, tolerancia=1e-6, precision=10):
     x = valor_inicial
-    results = []
+    results = []   
+    
     for i in range(iteraciones):
         fx = round(f(x), precision)
-        dfx = round(derivative(f, x, dx=tolerancia), precision)
+        dfx = round(derivative(f, x,), precision)
+        
         if dfx == 0:
             raise ValueError("La derivada es cero. El método no puede continuar.")
+            
         x_new = round(x - fx / dfx, precision)
-        # Calcula el error absoluto: distancia entre el valor nuevo y el anterior
         error_abs = abs(x_new - x)
+        
         results.append([i, x, fx, dfx, x_new, round(error_abs, precision)])
-        print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
+        
         if error_abs < tolerancia:
+            # Se invoca la impresión una sola vez al confirmar la convergencia
+            print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
             return x_new
+            
         x = x_new
+        
+    # Se invoca la impresión una sola vez en caso de divergencia o falta de iteraciones
+    print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
     raise ValueError("El método no convergió o faltan iteraciones.")
 
 def graficar(f, raiz):
@@ -43,12 +52,14 @@ def graficar(f, raiz):
     plt.title('Gráfica de la función y su raíz')
     plt.show()
 
+
+
 # Definir la función para la cual quieres encontrar la raíz
 def f(x):
-    return x * np.exp(-x) 
+    return x**3 -x-4
 
 # Valor inicial
-valor_inicial = -1
+valor_inicial = 1
 
 # Encontrar la raíz utilizando el método de Newton-Raphson
 raiz = newton_raphson(f, valor_inicial)
@@ -58,3 +69,4 @@ print(f"La raíz encontrada es: {raiz}")
 
 # Graficar la función y la raíz
 graficar(f, raiz)
+
