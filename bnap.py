@@ -16,6 +16,17 @@ from tabulate import tabulate
 '''
 
 # -----------------------------------
+#  VARIABLES GLOBALES
+# ------------------------------------
+
+MAX_ITERACIONES = 100
+TOLERANCIA = 1e-6
+PRECISION = 10
+
+
+
+
+# -----------------------------------
 #  METODOS NUMERICOS
 # ------------------------------------
 
@@ -23,7 +34,7 @@ from tabulate import tabulate
         - Intervalo [a, b] ó inicio y fin para buscar intervalos
         - Funcion f(x) 
 '''
-def biseccion(f, a, b, iteraciones=100, tolerancia=1e-3, precision=8):
+def biseccion(f, a, b, iteraciones=MAX_ITERACIONES, tolerancia=TOLERANCIA, precision=PRECISION):
     # Verificación inicial
     if f(a) * f(b) >= 0:
         raise ValueError("La función debe tener signos opuestos en los extremos del intervalo.")
@@ -80,7 +91,7 @@ def buscar_intervalos(f, inicio, fin, paso=0.5):
         - Requiere un x0 inicial
         - Se debe cumplir condicion de lipschitz --> |g'(x0)| < 1
 '''
-def fixed_point_iteration(x0, tol=1e-6, max_iter=100):
+def punto_fijo(x0, tol=TOLERANCIA, max_iter=MAX_ITERACIONES):
     x = x0
     iter_values = [x0]
 
@@ -108,7 +119,7 @@ def fixed_point_iteration(x0, tol=1e-6, max_iter=100):
         - Requiere un x0 inicial
         - Se debe cumplir condicion de lipschitz --> |g'(x0)| < 1
 '''
-def punto_fijo_con_aitken_tabla(g, x0, tol=1e-6, max_iter=100):
+def punto_fijo_con_aitken_tabla(g, x0, tol=TOLERANCIA, max_iter=MAX_ITERACIONES):
     x = x0
     print(f"{'Iteración':<10}{'x':<20}{'x1 = g(x)':<20}{'x2 = g(x1)':<20}{'x_acelerado':<20}{'Error':<20}")
     print("-" * 100)
@@ -154,7 +165,7 @@ def derivative_for_newton_r(f, x, dx=1e-6):
     """Aproximación de la derivada usando diferencias centrales"""
     return (f(x + dx) - f(x - dx)) / (2.0 * dx)
 
-def newton_raphson(f, valor_inicial, iteraciones=100, tolerancia=1e-6, precision=10):
+def newton_raphson(f, valor_inicial, iteraciones=MAX_ITERACIONES, tolerancia=TOLERANCIA, precision=PRECISION):
     x = valor_inicial
     results = []
     for i in range(iteraciones):

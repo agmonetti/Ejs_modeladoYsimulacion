@@ -1,6 +1,6 @@
 import numpy as np
 
-def fixed_point_iteration(x0, tol=1e-6, max_iter=100):
+def punto_fijo(g, x0, tol=1e-6, max_iter=100):
     x = x0
     iter_values = [x0]
 
@@ -19,12 +19,11 @@ def fixed_point_iteration(x0, tol=1e-6, max_iter=100):
 
     return x_new, iter_values
 
-
 def g(x):
     return  x - x*np.exp(-x)
 
 x0 = 0.5
-root, iter_values = fixed_point_iteration(x0)
+root, iter_values = punto_fijo(g, x0)
 
 #print(np.pi)
 
