@@ -216,6 +216,9 @@ def ejecutar_ejercicio(puntos_x, x_eval, func_str=None, puntos_y=None):
         # 7. Graficar
         graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y_calc, x_eval, P_eval_num)
 
+    else:
+        print()
+        print(f"Al ser el pto de evaluacion {x_eval}, solo se construye el polinomio")
 
 # ==========================================
 # main
