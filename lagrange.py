@@ -59,8 +59,12 @@ def calcular_polinomio_lagrange(puntos_x, x_eval, func_str=None, puntos_y=None):
     
 
     # Evaluación explícita solicitada
-    P_eval_num = float(P_final.subs(x, x_eval).evalf())
-    print(f"\n=> Evaluación: P_{n-1}({x_eval}) ~= {P_eval_num:.6f}\n")
+    if x_eval != 999:
+        P_eval_num = float(P_final.subs(x, x_eval).evalf())
+        print(f"\n=> Evaluación: P_{n-1}({x_eval}) ~= {P_eval_num:.6f}\n")
+    else:
+        P_eval_num = x_eval
+
     
     return f, P_final, puntos_y, P_eval_num
 
@@ -182,33 +186,35 @@ def ejecutar_ejercicio(puntos_x, x_eval, func_str=None, puntos_y=None):
         print(f" RESOLVIENDO: Interpolación con datos directos ")
     print("="*60, "\n")
     
+
     # 1, 2 y 3. Armar Polinomio, evaluar nodos y punto pedido
     f_expr, P_expr, puntos_y_calc, P_eval_num = calcular_polinomio_lagrange(puntos_x, x_eval, func_str=func_str, puntos_y=puntos_y)
     
     # 4. Calcular Errores
-    error_local = calcular_error_local(f_expr, P_expr, x_eval, P_eval_num)
+    if(P_eval_num != x_eval):
+        error_local = calcular_error_local(f_expr, P_expr, x_eval, P_eval_num)
     
-    # 5. Cota global
-    cota_global = calcular_cota_global(f_expr, puntos_x)
+         # 5. Cota global
+        cota_global = calcular_cota_global(f_expr, puntos_x)
     
-    # 6. Demostración
-    print("--- 5. Demostración Final ---")
-    if error_local is not None and cota_global is not None:
-        if error_local <= cota_global:
-            print()
-            print(f"¡Éxito! Cota global ({float(cota_global):.6f}) >= Error Local ({error_local:.6f})")
-            print()
+        # 6. Demostración
+        print("--- 5. Demostración Final ---")
+        if error_local is not None and cota_global is not None:
+            if error_local <= cota_global:
+                print()
+                print(f"¡Éxito! Cota global ({float(cota_global):.6f}) >= Error Local ({error_local:.6f})")
+                print()
+            else:
+                print()
+                print(f"ATENCIÓN: Cota global ({float(cota_global):.6f}) < Error Local ({error_local:.6f}). Revisar.")
+                print()
         else:
             print()
-            print(f"ATENCIÓN: Cota global ({float(cota_global):.6f}) < Error Local ({error_local:.6f}). Revisar.")
+            print("(Demostración de cota omitida: faltan datos de la función original)")
             print()
-    else:
-        print()
-        print("(Demostración de cota omitida: faltan datos de la función original)")
-        print()
-        
-    # 7. Graficar
-    graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y_calc, x_eval, P_eval_num)
+            
+        # 7. Graficar
+        graficar_interpolacion(func_str, f_expr, P_expr, puntos_x, puntos_y_calc, x_eval, P_eval_num)
 
 
 # ==========================================
@@ -216,6 +222,7 @@ def ejecutar_ejercicio(puntos_x, x_eval, func_str=None, puntos_y=None):
 # ==========================================
 
 # Firma de la función: (puntos_x, x_eval, func_str=None, puntos_y=None)
+# si x_eval = 999 -> solo se calcula el polinomio
 
 # CASO 1: Con función explícita
 # ejecutar_ejercicio([1, 2, 3], 1.3, func_str='exp(x)')
@@ -223,4 +230,4 @@ def ejecutar_ejercicio(puntos_x, x_eval, func_str=None, puntos_y=None):
 # CASO 2: Con datos directos
 # ejecutar_ejercicio([0, 1, 3, 4], 0.45, puntos_y=[1.0, 2.718, 20.086, 54.598])
 
-ejecutar_ejercicio([0, 1,2], 1.3, puntos_y=[1,3,0])
+ejecutar_ejercicio([0, 1,2,3,4], 999, puntos_y=[1,2,0,2,3])
