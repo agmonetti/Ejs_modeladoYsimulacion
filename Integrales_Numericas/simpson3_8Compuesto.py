@@ -33,7 +33,7 @@ def simpson_38_compuesto(f, a, b, n, precision=6):
         tabla_pizarra.append([i, round(x[i], precision), round(y[i], precision)])
         
     print("\nTABLA DE VALORES:")
-    print(tabulate(tabla_pizarra, headers=["n", "x_n", "f(x_n)"], tablefmt="grid"))
+    print(tabulate(tabla_pizarra, headers=["n", "x_n", "f(x_n)"], tablefmt="grid",disable_numparse=True))
     
     # --- 2. DESARROLLO ESCRITO DE LA FÓRMULA ---
     # Extraemos pares e impares usando slicing

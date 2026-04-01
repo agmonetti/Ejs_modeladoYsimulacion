@@ -56,7 +56,7 @@ def rectangulo_medio_compuesto(f, a, b, n, precision=6):
         tabla.append([i, round(x[i], precision), round(x_medio[i-1], precision), round(y_medio[i-1], precision)])
         
     print("\nTABLA DE VALORES:")
-    print(tabulate(tabla, headers=["n", "x_n", "x_medio_n", "f(x_medio_n)"], tablefmt="grid"))
+    print(tabulate(tabla, headers=["n", "x_n", "x_medio_n", "f(x_medio_n)"], tablefmt="grid",disable_numparse=True))
     
     # Desarrollo
     str_valores = " + ".join([f"{val:.{precision}f}" for val in y_medio])
@@ -85,7 +85,7 @@ def trapecio_compuesto(f, a, b, n, precision=6):
     # Tabla
     tabla = [[i, round(x[i], precision), round(y[i], precision)] for i in range(n + 1)]
     print("\nTABLA DE VALORES:")
-    print(tabulate(tabla, headers=["n", "x_n", "f(x_n)"], tablefmt="grid"))
+    print(tabulate(tabla, headers=["n", "x_n", "f(x_n)"], tablefmt="grid",disable_numparse=True))
     
     # Desarrollo
     interiores = y[1:n]
@@ -120,13 +120,13 @@ def simpson_13_compuesto(f, a, b, n, precision=6):
     # Tabla
     tabla = [[i, round(x[i], precision), round(y[i], precision)] for i in range(n + 1)]
     print("\nTABLA DE VALORES:")
-    print(tabulate(tabla, headers=["n", "x_n", "f(x_n)"], tablefmt="grid"))
+    print(tabulate(tabla, headers=["n", "x_n", "f(x_n)"], tablefmt="grid",disable_numparse=True))
     
     # Desarrollo
     impares = y[1:n:2]
     pares = y[2:n-1:2]
     str_impares = " + ".join([f"{val:.{precision}f}" for val in impares])
-    str_pares = " + ".join([f"{val:.{precision}f}" for val in pares])
+    str_pares = " + ".join([f"{val:.{precision}f}" for val in pares])   
     
     termino_pares = f" + 2({str_pares})" if str_pares else ""
     fraccion_h = f"{h}/3" if isinstance(h, float) else f"({b}-{a})/{3*n}"

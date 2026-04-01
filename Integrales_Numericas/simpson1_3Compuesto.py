@@ -3,7 +3,7 @@ from tabulate import tabulate
 
 # 1. Definimos la función a integrar (Ejemplo de la pizarra)
 def funcion(x):
-    return 6 + 3 * np.cos(x)
+    return (1+x**2)**(1/4)
 
 # 2. Helper para el cálculo automático del error (Cuarta derivada)
 def cuarta_derivada_numerica(f, x, dx=1e-3):
@@ -32,7 +32,7 @@ def simpson_13_compuesto_pizarra(f, a, b, n, precision=6):
         tabla_pizarra.append([i, round(x[i], precision), round(y[i], precision)])
         
     print("\nTABLA DE VALORES:")
-    print(tabulate(tabla_pizarra, headers=["n", "x_n", "f(x_n)"], tablefmt="grid"))
+    print(tabulate(tabla_pizarra, headers=["n", "x_n", "f(x_n)"], tablefmt="grid",disable_numparse=True))
     
     # --- 2. DESARROLLO ESCRITO DE LA FÓRMULA ---
     # Extraemos pares e impares usando slicing
@@ -76,9 +76,9 @@ def simpson_13_compuesto_pizarra(f, a, b, n, precision=6):
 if __name__ == "__main__":
     # Variables de control del ejercicio de la pizarra
     a = 0
-    b = np.pi / 2
-    n = 4 # Número de subintervalos
+    b = 2
+    n = 6 # Número de subintervalos
     
-    decimales = 7 
+    decimales = 8
     
     resultado, error = simpson_13_compuesto_pizarra(funcion, a, b, n, precision=decimales)

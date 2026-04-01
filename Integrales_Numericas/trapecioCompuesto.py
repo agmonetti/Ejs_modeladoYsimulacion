@@ -3,14 +3,14 @@ from tabulate import tabulate
 
 # 1. Definimos la función a integrar
 def funcion(x):
-    return 6 + 3 * np.cos(x)
+    return np.exp(x**4)
 
 # 2. Helper para el cálculo automático del error
 def segunda_derivada_numerica(f, x, dx=1e-5):
     """Aproxima la segunda derivada usando diferencias centrales finitas."""
     return (f(x + dx) - 2 * f(x) + f(x - dx)) / (dx**2)
 
-def trapecio_compuesto_pizarra(f, a, b, n, precision=6):
+def trapecio_compuesto_pizarra(f, a, b, n, precision=8):
     print("\n" + "="*55)
     print(" MÉTODO: TRAPECIO COMPUESTO (INFORME COMPLETO) ")
     print("="*55)
@@ -25,10 +25,10 @@ def trapecio_compuesto_pizarra(f, a, b, n, precision=6):
     # --- 1. CONSTRUCCIÓN DE LA TABLA EXACTA ---
     tabla_pizarra = []
     for i in range(n + 1):
-        tabla_pizarra.append([i, round(x[i], precision), round(y[i], precision)])
+        tabla_pizarra.append([i, f"{x[i]:.{precision}f}", f"{y[i]:.{precision}f}"])
         
     print("\nTABLA DE VALORES:")
-    print(tabulate(tabla_pizarra, headers=["n", "x_n", "f(x_n)"], tablefmt="grid"))
+    print(tabulate(tabla_pizarra, headers=["n", "x_n", "f(x_n)"], tablefmt="grid", disable_numparse=True))
     
     # --- 2. DESARROLLO ESCRITO DE LA FÓRMULA ---
     interiores = y[1:n]
@@ -61,11 +61,11 @@ def trapecio_compuesto_pizarra(f, a, b, n, precision=6):
 # --- BLOQUE PRINCIPAL ---
 if __name__ == "__main__":
     # Variables de control
-    a = 0
-    b = np.pi/2
-    n = 4 # Número de subintervalos
+    a = -1
+    b = 1
+    n = 5 # Número de subintervalos
     
     # Control centralizado de la cantidad de decimales
-    decimales = 8
+    decimales = 12
     
     resultado, error = trapecio_compuesto_pizarra(funcion, a, b, n, precision=decimales)

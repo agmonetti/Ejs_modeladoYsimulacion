@@ -37,7 +37,7 @@ def rectangulo_medio_compuesto_pizarra(f, a, b, n, precision=6):
         ])
         
     print("\nTABLA DE VALORES:")
-    print(tabulate(tabla_pizarra, headers=["n", "x_n", "x_medio_n", "f(x_medio_n)"], tablefmt="grid"))
+    print(tabulate(tabla_pizarra, headers=["n", "x_n", "x_medio_n", "f(x_medio_n)"], tablefmt="grid",disable_numparse=True))
     
     # --- DESARROLLO DE LA FÓRMULA ---
     str_valores = " + ".join([f"{val:.{precision}f}" for val in y_medio])
