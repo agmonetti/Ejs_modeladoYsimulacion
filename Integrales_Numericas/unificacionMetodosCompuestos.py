@@ -19,7 +19,9 @@ Archivo Consolidador: Métodos de Integración Numérica (Fórmulas de Newton-Co
 #  FUNCION A INTEGRAR
 # ------------------------------------
 def funcion(x):
-    return (x**2) * np.exp(x) 
+    numerador = (2 + np.cos(1 + x**(3 / 2))) 
+    denominador = (1 + 0.5 * np.sin(x)) ** (1/2)
+    return (numerador / denominador)* np.exp(0.5 * x)
 
 
 # -----------------------------------
@@ -146,8 +148,8 @@ def simpson_13_compuesto(f, a, b, n, precision=6):
 if __name__ == "__main__":
     # --- PARÁMETROS GLOBALES DEL EJERCICIO ---
     a = 0
-    b = 3
-    n = 6 # numero de subintervalos
+    b = 2
+    n = 4 # numero de subintervalos
     decimales = 6
     
     print(f"Iniciando evaluación de la integral desde a={a} hasta b={b} con n={n} subintervalos.")
