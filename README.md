@@ -1,71 +1,48 @@
 # Ejercicios de Modelado y Simulación
 
-Este repositorio contiene implementaciones en Python de métodos numéricos clásicos
+Este repositorio contiene implementaciones en Python de métodos numéricos clásicos, organizados modularmente por unidad temática.
 
-## Métodos Implementados
+## Estructura
 
-### 1. Método de Bisección (`biseccion.py`)
-Implementación del método de bisección (o partición de intervalos) el cual se basa en el Teorema de Bolzano.
-- **Características**:
-  - Búsqueda automática de intervalos (barrido escalar para detectar cambios de signo).
-  - Tabla de iteraciones detallada usando la librería `tabulate`.
-  - Visualización gráfica de la función y la raíz encontrada mediante `matplotlib`.
-- **Uso**: El usuario debe proveer el intervalo inicial `[a, b]` y la función a evaluar `f(x)`.
+### 1. Búsqueda de Raíces (Ecuaciones No Lineales)
+Ubicación: `/Busqueda_Raices/`
 
-### 2. Método de Iteración de Punto Fijo (`puntoFijo.py`)
-Implementación de la iteración de punto fijo para encontrar las raíces de una ecuación transformándola a la forma $x = g(x)$.
-- **Características**:
-  - Imprime el valor de $x$ en cada iteración.
-  - Verifica dinámicamente la convergencia analizando la tolerancia requerida comparada con el error absoluto de iteraciones sucesivas.
-- **Uso**: El usuario debe proveer el punto inicial $x_0$ y la función $g(x)$.
+Algoritmos para encontrar en qué punto una función cruza el eje X ($f(x) = 0$).
+* **Bisección (`biseccion.py`)**: Método cerrado basado en el Teorema de Bolzano. Incluye barrido escalar automático para detectar cambios de signo.
+* **Punto Fijo (`puntoFijo.py`)**: Método abierto que transforma la ecuación a la forma $x = g(x)$. Verifica dinámicamente la convergencia analizando el error absoluto.
+* **Newton-Raphson (`nRaphson.py`)**: Método abierto apoyado en la derivada numérica (diferencias centrales).
+* **Aceleración de Aitken (`aitken.py`)**: Mejora $\Delta^2$ aplicada sobre el método de Punto Fijo para acelerar drásticamente la tasa de convergencia.
+* **Orquestador General (`bnap.py`)**: Consolidación de los cuatro métodos en un único archivo para su ejecución simultánea. Incluye análisis comparativo de convergencia y gráficos unificados mediante `matplotlib`.
 
-### 3. Método de Newton-Raphson (`nRaphson.py`)
-Implementación del método de Newton-Raphson para encontrar las raíces de una función no lineal aproximándose mediante su derivada.
-- **Características**:
-  - Cálculo de la derivada numérica utilizando el método de diferencias centrales (no requiere librería extra para derivar).
-  - Tabla de iteraciones interactiva generada con `tabulate`.
-  - Visualización gráfica de la función y la posición exacta de la raíz usando `matplotlib`.
-- **Uso**: El usuario debe proveer la función principal $f(x)$ y una aproximación o valor inicial $x_0$.
+### 2. Derivación Numérica
+Ubicación: `/Derivacion_Numerica/`
 
-### 4. Método de Aceleración de Aitken (`aitken.py`)
-Implementación de la mejora $\Delta^2$ de Aitken aplicada sobre el método secuencial de Punto Fijo.
-- **Características**:
-  - Mejora y acelera drásticamente la tasa de convergencia en relación al Punto Fijo estándar.
-  - Presentación mediante consola de una tabla con los cálculos de las iteraciones puente unificadas ($x_1$, $x_2$) y el valor acelerado precalculado.
-- **Uso**: El usuario debe proveer el punto inicial $x_0$ y la función iterante $g(x)$.
+* **Diferencias Finitas (`diferencias_finitas.py`)**: Implementación del cálculo numérico de la primera y segunda derivada mediante aproximaciones por diferencias finitas centradas. Compara automáticamente con valores exactos usando `sympy` y calcula el error absoluto.
 
-### 5. Método de Diferencias Finitas (`diferencias_finitas.py`)
-Implementación del cálculo de derivadas numéricas mediante aproximaciones por diferencias finitas centradas.
-- **Características**:
-  - Cálculo de primera y segunda derivada usando diferencias centrales.
-  - Comparación automática con valores exactos (analíticos) usando SymPy.
-  - Cálculo del error absoluto para validar precisión de la aproximación.
-  - No requiere derivación simbólica explícita en el código principal.
-- **Uso**: El usuario debe proveer la función $f(x)$ como string, el punto $x$ donde evaluar, y el paso $h$.
+### 3. Integración Numérica (Fórmulas de Newton-Cotes)
+Ubicación: `/Integrales_Numericas/`
 
-### 6. Interpolación de Lagrange (`lagrange.py`)
-Implementación del método de interpolación polinomial de Lagrange para reconstruir funciones a partir de puntos conocidos.
-- **Características**:
-  - **Modo dual**: Soporta tanto función explícita como datos directos (puntos $x$ y $y$ sin función).
-  - Construcción paso a paso del polinomio interpolador con visualización de cada término.
-  - Cálculo de errores locales y cotas globales teóricas (con teorema de Taylor).
-  - Gráfico comparativo entre función original y polinomio interpolador.
-  - Validación de que el error local está dentro de la cota teórica.
-- **Uso**:
-  - Con función: `ejecutar_ejercicio([1,2,3], 1.5, func_str='exp(x)')`
-  - Con datos: `ejecutar_ejercicio([1,2,3], 1.5, puntos_y=[2.7, 7.4, 20.1])`
+Familia de algoritmos para la aproximación del área bajo la curva. 
+**Características destacadas del módulo:**
+* **Formato de Pizarra:** Las salidas por consola generan tablas de iteración y desarrollos algebraicos idénticos a las resoluciones exigidas en clase (UADE).
+* **Precisión Dinámica:** Permiten inyectar la cantidad exacta de decimales requeridos para el reporte.
+* **Error de Truncamiento Autónomo:** Calculan automáticamente su propia cota de error máximo ($E_T$) utilizando derivadas numéricas de orden superior (diferencias centrales), sin requerir derivación manual.
 
-### 7. Métodos Unificados (`bnap.py`)
-Consolidación de los cuatro métodos principales en un único archivo para comparación:
-- **Métodos incluidos**: Bisección, Newton-Raphson, Punto Fijo, y Aceleración de Aitken.
-- **Características**:
-  - Búsqueda automática de intervalos mediante barrido escalar.
-  - Tablas de iteraciones detalladas con formato legible.
-  - Gráficas de la función y localización de raíces.
-  - Análisis comparativo de convergencia entre métodos.
+**Métodos Implementados:**
+* **Rectángulo Medio (`rectanguloCompuesto.py`)**: Regla compuesta evaluando el punto medio de cada subintervalo.
+* **Trapecios (`trapecioSimple.py`, `trapecioCompuesto.py`)**: Aproximación lineal (Newton-Cotes de orden 1).
+* **Simpson 1/3 (`simpson1_3Simple.py`, `simpson1_3Compuesto.py`)**: Aproximación cuadrática. El método compuesto incluye validación estricta de intervalos pares ($n$ par).
+* **Simpson 3/8 (`simpson3_8Simple.py`, `simpson3_8Compuesto.py`)**: Aproximación cúbica. El método compuesto incluye validación estricta de intervalos múltiplos de 3.
+* **Resumen Comparativo (`unificacionMetodosCompuestos.py`)**: Script maestro que ejecuta las formas compuestas del Rectángulo, Trapecio y Simpson 1/3 sobre una misma función, emitiendo una tabla comparativa de resultados finales y cotas de error.
+
+### 4. Interpolación Numérica
+Ubicación: `/Interpolacion_Numerica/`
+
+* **Interpolación de Lagrange (`lagrange.py`)**: Reconstrucción de polinomios a partir de puntos conocidos. Soporta tanto funciones explícitas como conjuntos de datos discretos. Construye paso a paso el polinomio, calcula errores locales y cotas teóricas globales, y grafica la comparativa.
+
+---
 
 ## Dependencias
 
 ```bash
 pip install numpy matplotlib tabulate sympy
-```
