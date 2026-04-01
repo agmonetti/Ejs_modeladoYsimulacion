@@ -56,10 +56,10 @@ def graficar(f, raiz):
 
 # Definir la función para la cual quieres encontrar la raíz
 def f(x):
-    return x**3 -x-4
+    return np.sin(x) / x
 
 # Valor inicial
-valor_inicial = 1
+valor_inicial = .5
 
 # Encontrar la raíz utilizando el método de Newton-Raphson
 raiz = newton_raphson(f, valor_inicial)

@@ -1,8 +1,9 @@
 import numpy as np
+from tabulate import tabulate
 
 # 1. Definimos la función a integrar
 def funcion(x):
-    return np.sin(x)
+    return np.sin(x) / x
 
 # 2. Helper para el cálculo automático del error (Cuarta derivada)
 def cuarta_derivada_numerica(f, x, dx=1e-3):
@@ -25,6 +26,34 @@ def simpson_38_compuesto(f, a, b, n, precision=6):
     x = np.linspace(a, b, n + 1)
     y = f(x)
     
+
+     # --- 1. CONSTRUCCIÓN DE LA TABLA EXACTA ---
+    tabla_pizarra = []
+    for i in range(n + 1):
+        tabla_pizarra.append([i, round(x[i], precision), round(y[i], precision)])
+        
+    print("\nTABLA DE VALORES:")
+    print(tabulate(tabla_pizarra, headers=["n", "x_n", "f(x_n)"], tablefmt="grid"))
+    
+    # --- 2. DESARROLLO ESCRITO DE LA FÓRMULA ---
+    # Extraemos pares e impares usando slicing
+    impares = y[1:n:2]
+    pares = y[2:n-1:2]
+    
+    # Convertimos a texto con la precisión deseada
+    str_impares = " + ".join([f"{val:.{precision}f}" for val in impares])
+    str_pares = " + ".join([f"{val:.{precision}f}" for val in pares])
+    
+    fraccion_h = f"{h}/3" if isinstance(h, float) else f"({b}-{a})/{3*n}"
+    
+    # Construimos el desarrollo condicionalmente (por si n=2 y no hay términos pares)
+    termino_pares = f" + 2({str_pares})" if str_pares else ""
+    desarrollo = f"I ~= {fraccion_h} [ {y[0]:.{precision}f} + 4({str_impares}){termino_pares} + {y[-1]:.{precision}f} ]"
+    
+    print("\nDESARROLLO DE LA FÓRMULA:")
+    print(desarrollo)
+
+
     # --- 1. AGRUPACIÓN Y DESARROLLO DE LA FÓRMULA ---
     # Extraemos los grupos usando slicing
     grupo_1 = y[1:n:3]
@@ -69,8 +98,8 @@ def simpson_38_compuesto(f, a, b, n, precision=6):
 if __name__ == "__main__":
     # Parámetros centralizados
     a = 0
-    b = np.pi
-    n = 9 # Debe ser múltiplo de 3
+    b = 1
+    n = 6 # Debe ser múltiplo de 3
     decimales = 6
     
     resultado, error = simpson_38_compuesto(funcion, a, b, n, precision=decimales)
