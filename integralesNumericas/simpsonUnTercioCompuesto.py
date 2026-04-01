@@ -1,53 +1,84 @@
 import numpy as np
+from tabulate import tabulate
 
-# 1. Definimos la función a integrar
+# 1. Definimos la función a integrar (Ejemplo de la pizarra)
 def funcion(x):
     return 6 + 3 * np.cos(x)
 
-# 2. El "Auto-Calculador" de la CUARTA derivada numérica
+# 2. Helper para el cálculo automático del error (Cuarta derivada)
 def cuarta_derivada_numerica(f, x, dx=1e-3):
     """Aproxima la cuarta derivada usando diferencias centrales."""
-    # Nota técnica: Usamos dx=1e-3 en lugar de 1e-5 porque al elevarse a la cuarta potencia (dx**4), 
-    # un número muy chico causaría un desbordamiento a cero en la memoria (underflow).
     return (f(x + 2*dx) - 4*f(x + dx) + 6*f(x) - 4*f(x - dx) + f(x - 2*dx)) / (dx**4)
 
-# Límites de integración
-a = 0
-b = np.pi/2
+def simpson_13_compuesto_pizarra(f, a, b, n, precision=6):
+    print("\n" + "="*55)
+    print(" MÉTODO: SIMPSON 1/3 COMPUESTO (INFORME COMPLETO) ")
+    print("="*55)
+    
+    # Validación teórica inquebrantable
+    if n % 2 != 0:
+        raise ValueError("¡Error! La regla de Simpson 1/3 exige que el número de subintervalos (n) sea PAR.")
 
-# Número de subintervalos (DEBE SER PAR)
-n = 4
+    h = (b - a) / n
+    print(f"Parámetros: n = {n}  ->  h = {h}")
+    
+    # Generamos los vectores
+    x = np.linspace(a, b, n + 1)
+    y = f(x)
+    
+    # --- 1. CONSTRUCCIÓN DE LA TABLA EXACTA ---
+    tabla_pizarra = []
+    for i in range(n + 1):
+        tabla_pizarra.append([i, round(x[i], precision), round(y[i], precision)])
+        
+    print("\nTABLA DE VALORES:")
+    print(tabulate(tabla_pizarra, headers=["n", "x_n", "f(x_n)"], tablefmt="grid"))
+    
+    # --- 2. DESARROLLO ESCRITO DE LA FÓRMULA ---
+    # Extraemos pares e impares usando slicing
+    impares = y[1:n:2]
+    pares = y[2:n-1:2]
+    
+    # Convertimos a texto con la precisión deseada
+    str_impares = " + ".join([f"{val:.{precision}f}" for val in impares])
+    str_pares = " + ".join([f"{val:.{precision}f}" for val in pares])
+    
+    fraccion_h = f"{h}/3" if isinstance(h, float) else f"({b}-{a})/{3*n}"
+    
+    # Construimos el desarrollo condicionalmente (por si n=2 y no hay términos pares)
+    termino_pares = f" + 2({str_pares})" if str_pares else ""
+    desarrollo = f"I ~= {fraccion_h} [ {y[0]:.{precision}f} + 4({str_impares}){termino_pares} + {y[-1]:.{precision}f} ]"
+    
+    print("\nDESARROLLO DE LA FÓRMULA:")
+    print(desarrollo)
+    
+    # --- 3. CÁLCULO NUMÉRICO DE LA INTEGRAL ---
+    S = y[0] + y[-1] + 4 * np.sum(impares) + 2 * np.sum(pares)
+    integral = (h / 3) * S
+    
+    # --- 4. CÁLCULO DEL ERROR DE TRUNCAMIENTO MÁXIMO ---
+    x_fino = np.linspace(a, b, 1000) 
+    arreglo_cuartas_derivadas = cuarta_derivada_numerica(f, x_fino)
+    max_cuarta = np.max(np.abs(arreglo_cuartas_derivadas))
+    
+    # Fórmula del error: ((b-a)^5 / 180n^4) * max|f''''(x)|
+    cota_error = ((b - a)**5 / (180 * n**4)) * max_cuarta
+    
+    print(f"\nRESULTADOS FINALES:")
+    print(f"I ~= {integral:.{precision}f}")
+    # Usamos notación científica explícita para el error si es muy pequeño, o más decimales
+    print(f"E_t <= ±{cota_error:.8f}")
+    print("="*55 + "\n")
+    
+    return integral, cota_error
 
-# --- VALIDACIÓN TEÓRICA ---
-if n % 2 != 0:
-    raise ValueError("¡Error! La regla de Simpson 1/3 exige que el número de subintervalos (n) sea PAR.")
-
-# Paso
-h = (b - a) / n
-
-# --- CÁLCULO DE LA INTEGRAL ---
-x = np.linspace(a, b, n + 1)
-y = funcion(x)
-
-# Aplicamos la regla de Simpson compuesta con slicing de NumPy
-S = y[0] + y[-1] + 4 * np.sum(y[1:n:2]) + 2 * np.sum(y[2:n-1:2])
-integral = (h / 3) * S
-
-
-# --- CÁLCULO DEL ERROR MÁXIMO AUTOMATIZADO ---
-# Creamos el vector de "escaneo"
-x_fino = np.linspace(a, b, 1000) 
-
-# Auto-calculamos la 4ta derivada para toda la curva
-arreglo_cuartas_derivadas = cuarta_derivada_numerica(funcion, x_fino)
-
-# Buscamos el valor más alto en valor absoluto (el peor escenario)
-max_cuarta_derivada = np.max(np.abs(arreglo_cuartas_derivadas))
-
-# Aplicamos la fórmula teórica del error para Simpson 1/3
-cota_error = ((b - a)**5 / (180 * n**4)) * max_cuarta_derivada
-
-
-# --- IMPRESIÓN DE RESULTADOS ---
-print(f"Integral aproximada (Simpson 1/3 Compuesta) : {integral:.8f}")
-print(f"Cota de Error de Truncamiento máximo        : ±{cota_error:.8e}")
+# --- BLOQUE PRINCIPAL ---
+if __name__ == "__main__":
+    # Variables de control del ejercicio de la pizarra
+    a = 0
+    b = np.pi / 2
+    n = 4 # Número de subintervalos
+    
+    decimales = 7 
+    
+    resultado, error = simpson_13_compuesto_pizarra(funcion, a, b, n, precision=decimales)
