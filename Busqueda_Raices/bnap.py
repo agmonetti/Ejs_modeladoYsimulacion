@@ -207,6 +207,17 @@ def g(x):
 #  MAIN: ORQUESTADOR Y COMPARATIVA
 # ------------------------------------
 
+"""
+RESUMEN - que hace falta para cada metodo:
+
+1. BISECCIÓN: intervalo [a, b] donde f(a)·f(b) < 0
+2. PUNTO FIJO: despejar x = g(x) de f(x) = 0, y valor inicial x₀
+3. AITKEN: despejar x = g(x) de f(x) = 0, y valor inicial x₀
+4. NEWTON-RAPHSON: función f(x) y valor inicial x₀
+"""
+
+
+
 if __name__ == "__main__":
     # Parámetros iniciales
     a = 0
