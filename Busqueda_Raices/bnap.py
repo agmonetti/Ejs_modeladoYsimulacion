@@ -34,12 +34,12 @@ def biseccion(f, a, b, iteraciones=MAX_ITERACIONES, tolerancia=TOLERANCIA, preci
 
     results = []
     lista_errores = []
-    
+
     for i in range(iteraciones):
         c = (a + b) / 2.0
         fc = f(c)
         error_actual = abs(b - a) / 2.0
-        
+
         lista_errores.append(error_actual)
         results.append([i, round(a, precision), round(b, precision), round(c, precision), round(fc, precision)])
 
@@ -60,18 +60,18 @@ def punto_fijo(g, x0, tol=TOLERANCIA, max_iter=MAX_ITERACIONES):
     print("\n--- INICIANDO PUNTO FIJO ---")
     x = x0
     lista_errores = []
-    
+
     for i in range(max_iter):
         x_new = g(x)
         error_actual = abs(x_new - x)
         lista_errores.append(error_actual)
-        
+
         print(f"Iteracion {i}: {x_new}")
 
         if error_actual < tol:
             print(f"Convergencia alcanzada en {i+1} iteraciones.")
             return x_new, i + 1, lista_errores
-            
+
         x = x_new
 
     return None, max_iter, lista_errores
@@ -83,28 +83,28 @@ def punto_fijo_con_aitken_tabla(g, x0, tol=TOLERANCIA, max_iter=MAX_ITERACIONES)
     lista_errores = []
     print(f"{'Iteración':<10}{'x':<20}{'x1 = g(x)':<20}{'x2 = g(x1)':<20}{'x_acelerado':<20}{'Error':<20}")
     print("-" * 100)
-    
+
     for i in range(max_iter):
         x1 = g(x)
         x2 = g(x1)
-        
+
         denominador = x2 - 2 * x1 + x
         if denominador != 0:
             x_acelerado = x - (x1 - x)**2 / denominador
         else:
-            x_acelerado = x2 
-            
+            x_acelerado = x2
+
         error_actual = abs(x_acelerado - x)
         lista_errores.append(error_actual)
-        
+
         print(f"{i:<10}{x:<20.10f}{x1:<20.10f}{x2:<20.10f}{x_acelerado:<20.10f}{error_actual:<20.10f}")
-        
+
         if error_actual < tol:
             print(f"\nConvergencia alcanzada en {i+1} iteraciones.")
             return x_acelerado, i + 1, lista_errores
-            
+
         x = x_acelerado
-        
+
     return None, max_iter, lista_errores
 
 
@@ -114,28 +114,28 @@ def derivative_for_newton_r(f, x, dx=1e-6):
 def newton_raphson(f, valor_inicial, iteraciones=MAX_ITERACIONES, tolerancia=TOLERANCIA, precision=PRECISION):
     print("\n--- INICIANDO NEWTON-RAPHSON ---")
     x = valor_inicial
-    results = []   
+    results = []
     lista_errores = []
-    
+
     for i in range(iteraciones):
         fx = round(f(x), precision)
         dfx = round(derivative_for_newton_r(f, x), precision)
-        
+
         if dfx == 0:
             raise ValueError("La derivada es cero. El método no puede continuar.")
-            
+
         x_new = round(x - fx / dfx, precision)
         error_actual = abs(x_new - x)
-        
+
         lista_errores.append(error_actual)
         results.append([i, x, fx, dfx, x_new, round(error_actual, precision)])
-        
+
         if error_actual < tolerancia:
             print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
             return x_new, i + 1, lista_errores
-            
+
         x = x_new
-        
+
     print(tabulate(results, headers=["Iteración", "x", "f(x)", "f'(x)", "Resultado", "Error"], tablefmt="grid"))
     raise ValueError("El método no convergió.")
 
@@ -148,17 +148,17 @@ def graficar_comparativa(f, a, b, diccionario_raices):
     """Grafica la función y superpone las raíces de todos los métodos para comparación."""
     x = np.linspace(a - 0.5, b + 0.5, 400)
     y = f(x)
-    
+
     plt.figure(figsize=(10, 6))
     plt.plot(x, y, label='f(x)', color='black')
     plt.axhline(0, color='gray', linewidth=1, linestyle='--')
-    
+
     colores = ['red', 'blue', 'green', 'orange']
     marcadores = ['o', 's', '^', 'D']
-    
+
     for idx, (metodo, raiz) in enumerate(diccionario_raices.items()):
         if raiz is not None:
-            plt.plot(raiz, f(raiz), marker=marcadores[idx], color=colores[idx], 
+            plt.plot(raiz, f(raiz), marker=marcadores[idx], color=colores[idx],
                      markersize=8, label=f'{metodo} (x $\\approx$ {raiz:.5f})')
 
     plt.grid(color='lightgray', linestyle='-', linewidth=0.5)
@@ -172,15 +172,15 @@ def graficar_comparativa(f, a, b, diccionario_raices):
 def graficar_historial_errores(diccionario_errores):
     """Genera un gráfico de decaimiento del error en escala logarítmica."""
     plt.figure(figsize=(10, 6))
-    
+
     colores = {'Bisección': 'red', 'Punto Fijo': 'blue', 'Aitken': 'green', 'Newton-Raphson': 'orange'}
     marcadores = {'Bisección': 'o', 'Punto Fijo': 's', 'Aitken': '^', 'Newton-Raphson': 'D'}
-    
+
     for metodo, errores in diccionario_errores.items():
         if errores: # Si la lista no está vacía
             # Eje X son los números de iteración (1, 2, 3...)
             iteraciones = list(range(1, len(errores) + 1))
-            plt.plot(iteraciones, errores, marker=marcadores.get(metodo, 'o'), 
+            plt.plot(iteraciones, errores, marker=marcadores.get(metodo, 'o'),
                      color=colores.get(metodo, 'black'), linestyle='-', linewidth=2, label=metodo)
 
     plt.yscale('log') # Magia: transforma el eje Y a logaritmo
@@ -200,7 +200,7 @@ def f(x):
     return x - np.cos(x)
 
 def g(x):
-    return np.cos(x)
+    return (np.pi / 2) * x - 2
 
 
 # -----------------------------------
@@ -222,7 +222,7 @@ if __name__ == "__main__":
     # Parámetros iniciales
     a = 0
     b = 1
-    x0 = 0.5
+    x0 = 1.4
 
     # Diccionarios para almacenar resultados para el reporte final y gráficos
     resultados_raices = {}
@@ -243,6 +243,7 @@ if __name__ == "__main__":
     resultados_raices["Punto Fijo"] = raiz_pf
     resultados_comparativa.append(["Punto Fijo", raiz_pf, iter_pf])
     historial_errores["Punto Fijo"] = err_pf
+
 
     # 3. Aitken
     raiz_aitken, iter_aitken, err_aitken = punto_fijo_con_aitken_tabla(g, x0)
@@ -270,6 +271,6 @@ if __name__ == "__main__":
     # --- GRÁFICOS ---
     print("Generando Gráfico 1: Raíces sobre la Función f(x)...")
     graficar_comparativa(f, a, b, resultados_raices)
-    
+
     print("Generando Gráfico 2: Historial de Convergencia...")
     graficar_historial_errores(historial_errores)
