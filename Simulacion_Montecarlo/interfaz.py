@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import motor_montecarlo as motor
 
@@ -110,31 +111,36 @@ class SimuladorApp:
         ttk.Label(frame_top, text="f =").grid(row=0, column=2)
         self.entry_f_multi = ttk.Entry(frame_top, width=25)
         self.entry_f_multi.grid(row=0, column=3, padx=5)
-        self.entry_f_multi.insert(0, "sin(x) * cos(y)")
+        self.entry_f_multi.insert(0, "exp(x+y)")
 
         ttk.Label(frame_top, text="N=").grid(row=0, column=4)
         self.entry_N_multi = ttk.Entry(frame_top, width=8)
         self.entry_N_multi.grid(row=0, column=5, padx=5)
         self.entry_N_multi.insert(0, "10000")
 
+        ttk.Label(frame_top, text="Confianza (%):").grid(row=0, column=6)
+        self.combo_confianza_multi = ttk.Combobox(frame_top, values=["50","55","60","65","70","75","80", "85", "90", "95", "99"], width=4)
+        self.combo_confianza_multi.grid(row=0, column=7, padx=5)
+        self.combo_confianza_multi.set("95")
+
         # --- BOTÓN CON TEXTO DINÁMICO ---
         self.btn_multi = ttk.Button(frame_top, text="Calcular Integral Doble", command=self.accion_multi)
-        self.btn_multi.grid(row=0, column=6, padx=10)
+        self.btn_multi.grid(row=0, column=8, padx=10)
         
-        ttk.Button(frame_top, text="🖩 Teclado", command=lambda: self.abrir_teclado_avanzado(self.entry_f_multi)).grid(row=0, column=7, padx=5)
+        ttk.Button(frame_top, text="🖩 Teclado", command=lambda: self.abrir_teclado_avanzado(self.entry_f_multi)).grid(row=0, column=9, padx=5)
 
         frame_lims = ttk.Frame(frame_top)
-        frame_lims.grid(row=1, column=0, columnspan=8, pady=5)
+        frame_lims.grid(row=1, column=0, columnspan=10, pady=5)
         
         ttk.Label(frame_lims, text="X: a=").grid(row=0, column=0)
         self.ax = ttk.Entry(frame_lims, width=5); self.ax.grid(row=0, column=1); self.ax.insert(0, "0")
         ttk.Label(frame_lims, text="b=").grid(row=0, column=2)
-        self.bx = ttk.Entry(frame_lims, width=5); self.bx.grid(row=0, column=3); self.bx.insert(0, "pi")
+        self.bx = ttk.Entry(frame_lims, width=5); self.bx.grid(row=0, column=3); self.bx.insert(0, "2")
 
         ttk.Label(frame_lims, text="  |  Y: a=").grid(row=0, column=4)
-        self.ay = ttk.Entry(frame_lims, width=5); self.ay.grid(row=0, column=5); self.ay.insert(0, "0")
+        self.ay = ttk.Entry(frame_lims, width=5); self.ay.grid(row=0, column=5); self.ay.insert(0, "1")
         ttk.Label(frame_lims, text="b=").grid(row=0, column=6)
-        self.by = ttk.Entry(frame_lims, width=5); self.by.grid(row=0, column=7); self.by.insert(0, "pi")
+        self.by = ttk.Entry(frame_lims, width=5); self.by.grid(row=0, column=7); self.by.insert(0, "3")
 
         ttk.Label(frame_lims, text="  |  Z: a=").grid(row=0, column=8)
         self.az = ttk.Entry(frame_lims, width=5); self.az.grid(row=0, column=9); self.az.insert(0, "0")
@@ -143,11 +149,20 @@ class SimuladorApp:
         
         self.az.config(state="disabled"); self.bz.config(state="disabled")
 
-        frame_grafico = ttk.LabelFrame(self.tab_multi, text="Mapa de Dispersión (Max 2000 ptos)")
-        frame_grafico.pack(fill="both", expand=True, padx=5, pady=5)
+        frame_bottom = ttk.Frame(self.tab_multi)
+        frame_bottom.pack(fill="both", expand=True, padx=5, pady=5)
+        
+        frame_grafico = ttk.LabelFrame(frame_bottom, text="Mapa de Dispersión (Max 2000 ptos)")
+        frame_grafico.pack(side="left", fill="both", expand=True)
         self.fig_multi = plt.Figure(figsize=(6, 4))
         self.canvas_multi = FigureCanvasTkAgg(self.fig_multi, master=frame_grafico)
         self.canvas_multi.get_tk_widget().pack(fill="both", expand=True)
+        
+        frame_resultados = ttk.LabelFrame(frame_bottom, text="Resultados Estadísticos")
+        frame_resultados.pack(side="right", fill="both", expand=True, padx=5)
+        self.lbl_resultados_multi = ttk.Label(frame_resultados, text="...", font=("Courier", 13, "bold"), justify="left", foreground="#1a1a1a", background="#f5f5f5")
+        self.lbl_resultados_multi.pack(padx=15, pady=15, fill="both", expand=True, anchor="nw")
+        
 
     # =========================================================
     #  TAB ESTADÍSTICA
@@ -162,7 +177,7 @@ class SimuladorApp:
         self.entry_M.insert(0, "1000")
         
         ttk.Label(frame_top, text=" | Confianza (%):").pack(side="left", padx=5)
-        self.combo_confianza = ttk.Combobox(frame_top, values=["80", "85", "90", "95", "99"], width=4)
+        self.combo_confianza = ttk.Combobox(frame_top, values=["50","55","60","65","70","75","80", "85", "90", "95", "99"], width=4)
         self.combo_confianza.pack(side="left", padx=5)
         self.combo_confianza.set("95") 
         
@@ -401,24 +416,37 @@ class SimuladorApp:
         self.ax_stats.set_title(f"Distribución e Intervalo de Confianza al {stats['confianza_pct']}%")
         self.ax_stats.legend()
         self.canvas_stats.draw()
+
     def accion_multi(self):
         self.aplicar_semilla()
         try:
             dim = self.var_dim.get()
             N = int(self.entry_N_multi.get())
             txt_f = self.entry_f_multi.get()
+            confianza_txt = self.combo_confianza_multi.get().replace('%', '').strip()
+            confianza = float(confianza_txt) / 100.0
             
             p_ax = float(eval(self.ax.get().replace('pi', str(np.pi))))
             p_bx = float(eval(self.bx.get().replace('pi', str(np.pi))))
             p_ay = float(eval(self.ay.get().replace('pi', str(np.pi))))
             p_by = float(eval(self.by.get().replace('pi', str(np.pi))))
             
+            # Calcular z-score dinámico
+            z_score = motor.calcular_z_score(confianza)
+            
             if dim == 2:
                 f, err = motor.compilar_funcion(txt_f, 'x y')
                 if err: messagebox.showerror("Error", err); return
                 lims = [(p_ax, p_bx), (p_ay, p_by)]
-                I, x, y, f_eval = motor.simular_integral_multiple(f, lims, N, 2)
+                I, x, y, f_eval, stats = motor.simular_integral_multiple(f, lims, N, 2)
                 
+                escala = stats['escala']
+                G = stats['desv_std']  # Desviación estándar
+                EE = stats['error_est']  # Error estimado
+                IC_inf = I - z_score * EE * escala  # IC inferior
+                IC_sup = I + z_score * EE * escala  # IC superior
+                
+                # Gráfico
                 self.fig_multi.clf()
                 ax = self.fig_multi.add_subplot(111)
                 limite = min(N, 2000)
@@ -427,14 +455,42 @@ class SimuladorApp:
                 ax.set_title(f"Integral Doble ~= {I:.6f}")
                 self.canvas_multi.draw()
                 
+                # Mostrar resultados estadísticos en label con formato mejorado
+                resultado = f"""╔═══════════════════════════════════╗
+║   INTEGRAL DOBLE - RESULTADOS     ║
+╚═══════════════════════════════════╝
+
+Escala = {escala:.6f}
+
+Î  = {I:.6f}
+G (σ) = {G:.6f}
+EE = {EE:.8f}
+Z-score = {z_score:.6f}
+
+┌─ INTERVALO DE CONFIANZA {confianza*100:.0f}% ─┐
+│ Inferior:  {IC_inf:.6f}
+│ Superior:  {IC_sup:.6f}
+│ Ancho: {IC_sup - IC_inf:.6f}
+└──────────────────────────────┘
+
+N = {stats['N']}"""
+                self.lbl_resultados_multi.config(text=resultado)
+                                                
             elif dim == 3:
                 p_az = float(eval(self.az.get().replace('pi', str(np.pi))))
                 p_bz = float(eval(self.bz.get().replace('pi', str(np.pi))))
                 f, err = motor.compilar_funcion(txt_f, 'x y z')
                 if err: messagebox.showerror("Error", err); return
                 lims = [(p_ax, p_bx), (p_ay, p_by), (p_az, p_bz)]
-                I, x, y, z, f_eval = motor.simular_integral_multiple(f, lims, N, 3)
+                I, x, y, z, f_eval, stats = motor.simular_integral_multiple(f, lims, N, 3)
                 
+                escala = stats['escala']
+                G = stats['desv_std']  # Desviación estándar
+                EE = stats['error_est']  # Error estimado
+                IC_inf = I - z_score * EE * escala  # IC inferior
+                IC_sup = I + z_score * EE * escala  # IC superior
+                
+                # Gráfico
                 self.fig_multi.clf()
                 ax = self.fig_multi.add_subplot(111, projection='3d')
                 limite = min(N, 2000)
@@ -442,6 +498,27 @@ class SimuladorApp:
                 self.fig_multi.colorbar(sc, ax=ax, label="f(x,y,z)")
                 ax.set_title(f"Integral Triple (Volumen) ~= {I:.6f}")
                 self.canvas_multi.draw()
+                
+                # Mostrar resultados estadísticos en label con formato mejorado
+                resultado = f"""╔═══════════════════════════════════╗
+║   INTEGRAL TRIPLE - RESULTADOS    ║
+╚═══════════════════════════════════╝
+
+Escala = {escala:.6f}
+
+Î  = {I:.6f}
+G (σ) = {G:.6f}
+EE = {EE:.8f}
+Z-score = {z_score:.6f}
+
+┌─ INTERVALO DE CONFIANZA {confianza*100:.0f}% ─┐
+│ Inferior:  {IC_inf:.6f}
+│ Superior:  {IC_sup:.6f}
+│ Ancho: {IC_sup - IC_inf:.6f}
+└──────────────────────────────┘
+
+N = {stats['N']}"""
+                self.lbl_resultados_multi.config(text=resultado)
                 
         except Exception as e:
             messagebox.showerror("Error", f"Verifique límites: {str(e)}")

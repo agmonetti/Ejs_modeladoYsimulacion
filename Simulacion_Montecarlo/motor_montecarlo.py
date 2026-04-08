@@ -4,12 +4,35 @@ import warnings
 from scipy.stats import norm
 from numpy.polynomial.legendre import leggauss
 
+def calcular_z_score(nivel_confianza=0.95):
+    """
+    Calcula el z-score para un nivel de confianza dado.
+    
+    Args:
+        nivel_confianza: Valor entre 0 y 1 (ej: 0.95 para 95%)
+    
+    Returns:
+        z_score: Valor Z correspondiente
+    """
+    alfa = 1.0 - nivel_confianza
+    z_score = norm.ppf(1.0 - (alfa / 2.0))
+    return z_score
+
 def compilar_funcion(texto_funcion, variables='x'):
     """
     Convierte un string matemático en una función NumPy ultrarrápida.
     Soporta múltiples variables (ej: variables='x y' o 'x y z').
+    Reemplaza 'e^' con 'exp(' para compatibilidad con notación matemática.
     """
     try:
+        # Reemplazar notación e^ con exp(
+        texto_funcion = texto_funcion.replace('e^', 'exp(')
+        # Contar paréntesis faltantes y cerrarlos
+        abiertos = texto_funcion.count('(')
+        cerrados = texto_funcion.count(')')
+        if abiertos > cerrados:
+            texto_funcion = texto_funcion + ')' * (abiertos - cerrados)
+        
         vars_sympy = sp.symbols(variables)
         expr = sp.sympify(texto_funcion)
         # lambdify requiere una tupla de variables si son múltiples
@@ -127,6 +150,7 @@ def simular_integral_multiple(f, limites, N, dim=2):
     """
     limites: [(ax, bx), (ay, by)] para 2D, o [(ax, bx), (ay, by), (az, bz)] para 3D.
     Utiliza el método del Valor Promedio.
+    Retorna: (integral_aprox, x, y, [z], f_eval, estadistica_dict)
     """
     if dim == 2:
         ax, bx = limites[0]
@@ -137,11 +161,26 @@ def simular_integral_multiple(f, limites, N, dim=2):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             f_eval = f(x_rand, y_rand)
-            f_eval_limpio = f_eval[np.isfinite(f_eval)]
+            # Reemplazar NaN e Inf por 0 (no filtrar, mantener N muestras)
+            f_eval = np.nan_to_num(f_eval, nan=0.0, posinf=0.0, neginf=0.0)
             
-        area = (bx - ax) * (by - ay)
-        promedio = np.mean(f_eval_limpio) if len(f_eval_limpio) > 0 else 0
-        return area * promedio, x_rand, y_rand, f_eval
+        escala = (bx - ax) * (by - ay)
+        promedio = np.mean(f_eval)
+        integral = escala * promedio
+        
+        # Estadística - usar todas las N muestras
+        desv_std = np.std(f_eval, ddof=1) if N > 1 else 0
+        error_est = desv_std / np.sqrt(N) if N > 0 else 0
+        
+        stats = {
+            "escala": escala,
+            "promedio": promedio,
+            "desv_std": desv_std,
+            "error_est": error_est,
+            "N": N
+        }
+        
+        return integral, x_rand, y_rand, f_eval, stats
 
     elif dim == 3:
         ax, bx = limites[0]
@@ -154,8 +193,23 @@ def simular_integral_multiple(f, limites, N, dim=2):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             f_eval = f(x_rand, y_rand, z_rand)
-            f_eval_limpio = f_eval[np.isfinite(f_eval)]
+            # Reemplazar NaN e Inf por 0 (no filtrar, mantener N muestras)
+            f_eval = np.nan_to_num(f_eval, nan=0.0, posinf=0.0, neginf=0.0)
             
-        volumen = (bx - ax) * (by - ay) * (bz - az)
-        promedio = np.mean(f_eval_limpio) if len(f_eval_limpio) > 0 else 0
-        return volumen * promedio, x_rand, y_rand, z_rand, f_eval
+        escala = (bx - ax) * (by - ay) * (bz - az)
+        promedio = np.mean(f_eval)
+        integral = escala * promedio
+        
+        # Estadística - usar todas las N muestras
+        desv_std = np.std(f_eval, ddof=1) if N > 1 else 0
+        error_est = desv_std / np.sqrt(N) if N > 0 else 0
+        
+        stats = {
+            "escala": escala,
+            "promedio": promedio,
+            "desv_std": desv_std,
+            "error_est": error_est,
+            "N": N
+        }
+        
+        return integral, x_rand, y_rand, z_rand, f_eval, stats
