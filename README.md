@@ -40,9 +40,23 @@ Ubicación: `/Interpolacion_Numerica/`
 
 * **Interpolación de Lagrange (`lagrange.py`)**: Reconstrucción de polinomios a partir de puntos conocidos. Soporta tanto funciones explícitas como conjuntos de datos discretos. Construye paso a paso el polinomio, calcula errores locales y cotas teóricas globales, y grafica la comparativa.
 
+### 5. Simulación de Monte Carlo
+Ubicación: `/Simulacion_Montecarlo/`
+
+Aplicación con Interfaz Gráfica (GUI) para la resolución estocástica de integrales definidas, análisis de convergencia y estimación de intervalos de confianza estadísticos.
+**Características destacadas del módulo:**
+* **Motor Matemático Blindado:** Compilación de strings a funciones vectorizadas de NumPy vía SymPy para ejecución ultrarrápida.
+* **Análisis Estadístico Predictivo:** Cálculo dinámico de Z-Scores (usando SciPy), validación contra un Error Máximo permitido y proyección de $N$ para factores de reducción $j$ exigidos en parciales.
+* **Output de Pizarra:** Generación del desarrollo analítico de la sumatoria paso a paso.
+
+**Archivos Principales:**
+* **`motor_montecarlo.py`**: Core lógico. Implementa Acierto y Fallo (Hit-or-Miss), Método del Valor Promedio (1D, 2D y 3D) y la Cuadratura de Gauss como pivote de error exacto.
+* **`interfaz.py`**: Frontend construido con Tkinter. Contiene gráficos interactivos con Matplotlib, tablas de recolección de muestras, teclado matemático avanzado flotante y selectores de confianza.
+* **`main.py`**: Archivo orquestador de entrada a la aplicación.
+
 ---
 
 ## Dependencias
 
 ```bash
-pip install numpy matplotlib tabulate sympy
+pip install numpy matplotlib tabulate sympy scipy
