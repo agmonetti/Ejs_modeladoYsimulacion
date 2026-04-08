@@ -6,13 +6,13 @@ from numpy.polynomial.legendre import leggauss
 
 def calcular_z_score(nivel_confianza=0.95):
     """
-    Calcula el z-score para un nivel de confianza dado.
+    Calcula el Z(α/2) para un nivel de confianza dado.
     
     Args:
         nivel_confianza: Valor entre 0 y 1 (ej: 0.95 para 95%)
     
     Returns:
-        z_score: Valor Z correspondiente
+        Z(α/2): Valor Z correspondiente
     """
     alfa = 1.0 - nivel_confianza
     z_score = norm.ppf(1.0 - (alfa / 2.0))
