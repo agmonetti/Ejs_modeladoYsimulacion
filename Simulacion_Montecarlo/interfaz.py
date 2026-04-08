@@ -465,7 +465,7 @@ Escala = {escala:.6f}
 Î  = {I:.6f}
 G (σ) = {G:.6f}
 EE = {EE:.8f}
-Z-score = {z_score:.6f}
+Z(α/2) = {z_score:.6f}
 
 ┌─ INTERVALO DE CONFIANZA {confianza*100:.0f}% ─┐
 │ Inferior:  {IC_inf:.6f}
@@ -509,7 +509,7 @@ Escala = {escala:.6f}
 Î  = {I:.6f}
 G (σ) = {G:.6f}
 EE = {EE:.8f}
-Z-score = {z_score:.6f}
+Z(α/2) = {z_score:.6f}
 
 ┌─ INTERVALO DE CONFIANZA {confianza*100:.0f}% ─┐
 │ Inferior:  {IC_inf:.6f}
