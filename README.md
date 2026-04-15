@@ -54,6 +54,18 @@ Aplicación con Interfaz Gráfica (GUI) para la resolución estocástica de inte
 * **`interfaz.py`**: Frontend construido con Tkinter. Contiene gráficos interactivos con Matplotlib, tablas de recolección de muestras, teclado matemático avanzado flotante y selectores de confianza.
 * **`main.py`**: Archivo orquestador de entrada a la aplicación.
 
+### 6. Ecuaciones Diferenciales Ordinarias (EDO)
+Ubicación: `/Ecuaciones_Diferenciales_Ordinarias/`
+
+Implementaciones numéricas para resolver problemas de valor inicial (Cauchy) de la forma $y' = f(x, y)$, con comparación contra solución analítica usando `sympy` y visualización con `matplotlib`.
+
+**Métodos Implementados:**
+* **Euler (`euler.py`)**: Método explícito de primer orden. Muestra tabla iterativa completa ($x_n$, $y_n$, $y_{n+1}$), error absoluto respecto de la solución exacta y gráfico comparativo.
+* **Euler Mejorado / Heun (`heun.py`)**: Método predictor-corrector de segundo orden. Incluye columnas de predicción y corrección por paso, junto con análisis de error y curva comparada.
+* **Runge-Kutta de 4to Orden (`rungeKutta4.py`)**: Método de cuarto orden con cálculo de $k_1$, $k_2$, $k_3$, $k_4$ por iteración, tabla detallada y validación frente a la solución exacta.
+
+* **Comparador General (`comparador.py`)**: Script unificado que ejecuta los tres métodos sobre una misma EDO, imprime tabla comparativa de aproximaciones y errores, y grafica tanto soluciones como evolución del error en escala logarítmica.
+
 ---
 
 ## Dependencias
