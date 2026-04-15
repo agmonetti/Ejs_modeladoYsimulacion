@@ -3,7 +3,7 @@ from tabulate import tabulate
 
 # 1. Definimos la función a integrar (Ejemplo de la pizarra)
 def funcion(x):
-    return np.exp(x)
+    return (x**x)
 
 # 2. Helper para el cálculo automático del error (Cuarta derivada)
 def cuarta_derivada_numerica(f, x, dx=1e-3):
@@ -76,8 +76,8 @@ def simpson_13_compuesto_pizarra(f, a, b, n, precision=6):
 if __name__ == "__main__":
     # Variables de control del ejercicio de la pizarra
     a = 0
-    b = 0
-    n = 6 # Número de subintervalos
+    b = 1
+    n = 4 # Número de subintervalos
     
     decimales = 8
     

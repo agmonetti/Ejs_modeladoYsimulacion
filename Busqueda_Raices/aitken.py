@@ -45,7 +45,7 @@ def punto_fijo_con_aitken_tabla(g, x0, tol=1e-6, max_iter=100):
 
 
 def g(x):
-    return (np.pi / 2) * x**2 - 2
+    return (np.pi / 2) * x**2 - 2# Ejemplo de función de iteración, puedes cambiarla por cualquier otra función que desees analizar
 
 x0 = 1.4
 

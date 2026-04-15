@@ -66,6 +66,6 @@ if __name__ == "__main__":
     n = 5 # Número de subintervalos
     
     # Control centralizado de la cantidad de decimales
-    decimales = 12
+    decimales = 8
     
     resultado, error = trapecio_compuesto_pizarra(funcion, a, b, n, precision=decimales)

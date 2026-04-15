@@ -233,4 +233,4 @@ def ejecutar_ejercicio(puntos_x, x_eval, func_str=None, puntos_y=None):
 # CASO 2: Con datos directos
 # ejecutar_ejercicio([0, 1, 3, 4], 0.45, puntos_y=[1.0, 2.718, 20.086, 54.598])
 
-ejecutar_ejercicio([1, 2, 3], 1.3, func_str="exp(x)")
+ejecutar_ejercicio([1, 2, 3], x_eval=1.3, func_str='exp(x)')
